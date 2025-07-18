@@ -1,4 +1,6 @@
-﻿ using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 #if ENABLE_INPUT_SYSTEM 
 using UnityEngine.InputSystem;
 #endif
@@ -74,7 +76,7 @@ namespace StarterAssets
 
         [Tooltip("For locking the camera position on all axis")]
         public bool LockCameraPosition = false;
-
+        public Gun gun;
         // cinemachine
         private float _cinemachineTargetYaw;
         private float _cinemachineTargetPitch;
@@ -86,6 +88,7 @@ namespace StarterAssets
         private float _rotationVelocity;
         private float _verticalVelocity;
         private float _terminalVelocity = 53.0f;
+        private int _upperBodyLayerIndex = -1;
 
         // timeout deltatime
         private float _jumpTimeoutDelta;
@@ -100,8 +103,10 @@ namespace StarterAssets
 
         // 공격용 애니메이션 ID 추가
         private int _animIDAttack1;
+        private int _animIDReload;
 
-#if ENABLE_INPUT_SYSTEM 
+
+#if ENABLE_INPUT_SYSTEM
         private PlayerInput _playerInput;
 #endif
         private Animator _animator;
@@ -138,21 +143,29 @@ namespace StarterAssets
         private void Start()
         {
             _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
-            
+
             _hasAnimator = TryGetComponent(out _animator);
             _controller = GetComponent<CharacterController>();
             _input = GetComponent<StarterAssetsInputs>();
-#if ENABLE_INPUT_SYSTEM 
+        #if ENABLE_INPUT_SYSTEM 
             _playerInput = GetComponent<PlayerInput>();
-#else
-			Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
-#endif
+        #endif
 
             AssignAnimationIDs();
 
             // reset our timeouts on start
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
+
+            // 🎯 애니메이터 레이어 인덱스 가져오기
+            if (_hasAnimator)
+            {
+                _upperBodyLayerIndex = _animator.GetLayerIndex("UpperBody");
+                if (_upperBodyLayerIndex == -1)
+                {
+                    Debug.LogWarning("UpperBody 레이어를 찾을 수 없습니다.");
+                }
+            }
         }
 
         private void Update()
@@ -163,6 +176,7 @@ namespace StarterAssets
             GroundedCheck();
             Move();
             HandleAttack();
+            HandleReload();
         }
 
         private void LateUpdate()
@@ -179,6 +193,8 @@ namespace StarterAssets
             _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
             // Attack1 애니메이션 해시 추가
             _animIDAttack1 = Animator.StringToHash("Attack1"); //Attact 트리거
+            _animIDReload = Animator.StringToHash("Reload");
+
         }
 
         private void GroundedCheck()
@@ -353,19 +369,71 @@ namespace StarterAssets
                 _verticalVelocity += Gravity * Time.deltaTime;
             }
         }
-        private void HandleAttack()
+        private Coroutine weightCoroutine;
+
+private void HandleAttack()
+{
+    if (_input.attack)
+    {
+        if (_hasAnimator)
         {
-            if (_input.attack) // 마우스 왼쪽 클릭하면
+            if(weightCoroutine != null) StopCoroutine(weightCoroutine);
+            weightCoroutine = StartCoroutine(ChangeLayerWeightSmoothly(1, _animator.GetLayerWeight(1), 1f, 0.3f)); // 0.3초 동안 가중치 올리기
+            _animator.SetTrigger(_animIDAttack1);
+
+            // 공격 애니메이션 길이(예: 1.167초) 이후 가중치 다시 내리기
+            StartCoroutine(DelayedWeightDown(1.167f));
+        }
+
+        gun.Fire();
+        _input.attack = false;
+    }
+}
+
+        private IEnumerator DelayedWeightDown(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+
+            if(weightCoroutine != null) StopCoroutine(weightCoroutine);
+            weightCoroutine = StartCoroutine(ChangeLayerWeightSmoothly(1, _animator.GetLayerWeight(1), 0f, 0.3f)); // 0.3초 동안 가중치 내리기
+        }
+        private IEnumerator ChangeLayerWeightSmoothly(int layerIndex, float startWeight, float endWeight, float duration)
+        {
+            float time = 0f;
+
+            while (time < duration)
+            {
+                time += Time.deltaTime;
+                float weight = Mathf.Lerp(startWeight, endWeight, time / duration);
+                _animator.SetLayerWeight(layerIndex, weight);
+                yield return null;
+            }
+
+            _animator.SetLayerWeight(layerIndex, endWeight);
+        }
+
+
+
+
+
+        private void HandleReload()
+        {
+            if (_input.reload) // 재장전 키 입력 감지 (예: R키)
             {
                 if (_hasAnimator)
                 {
-                    _animator.SetTrigger(_animIDAttack1);
+                    _animator.SetTrigger(_animIDReload);
                 }
 
-                // 공격 입력 초기화해서 연속 재생 방지
-                _input.attack = false;
+                if (gun != null)
+                {
+                    gun.Reload(); // Gun 스크립트에서 재장전 로직 실행
+                }
+
+                _input.reload = false; // 입력 초기화
             }
         }
+
 
 
         private static float ClampAngle(float lfAngle, float lfMin, float lfMax)

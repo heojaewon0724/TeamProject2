@@ -12,7 +12,7 @@ namespace StarterAssets
 		public Vector2 look;
 		public bool jump;
 		public bool sprint;
-		public bool leftclick;
+
 
 
 		[Header("Movement Settings")]
@@ -24,6 +24,8 @@ namespace StarterAssets
 
 		[Header("Combat Settings")]
 		public bool attack;
+		public bool reload;
+
 
 #if ENABLE_INPUT_SYSTEM
 		public void OnMove(InputValue value)
@@ -87,11 +89,19 @@ namespace StarterAssets
 		{
 			AttackInput(value.isPressed);
 		}
+		public void OnReload(InputValue value)
+		{
+			ReloadInput(value.isPressed);
+		}
 #endif
 
 		public void AttackInput(bool newAttackState)
 		{
 			attack = newAttackState;
+
+		}
+		public void ReloadInput(bool newReloadstate) {
+			reload = newReloadstate;
 		}
 	}
 	

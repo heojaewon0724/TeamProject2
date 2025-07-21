@@ -76,6 +76,9 @@ namespace StarterAssets
 
         [Tooltip("For locking the camera position on all axis")]
         public bool LockCameraPosition = false;
+
+        private bool isAttacking = false;
+
         public Gun gun;
         // cinemachine
         private float _cinemachineTargetYaw;
@@ -371,30 +374,46 @@ namespace StarterAssets
         }
         private Coroutine weightCoroutine;
 
-private void HandleAttack()
-{
-    if (_input.attack)
-    {
-        if (_hasAnimator)
+        private void HandleAttack()
         {
-            if(weightCoroutine != null) StopCoroutine(weightCoroutine);
-            weightCoroutine = StartCoroutine(ChangeLayerWeightSmoothly(1, _animator.GetLayerWeight(1), 1f, 0.3f)); // 0.3초 동안 가중치 올리기
-            _animator.SetTrigger(_animIDAttack1);
+            if (_input.attack && !isAttacking)
+            {
+                isAttacking = true; // 공격 시작
 
-            // 공격 애니메이션 길이(예: 1.167초) 이후 가중치 다시 내리기
-            StartCoroutine(DelayedWeightDown(1.167f));
+                if (_hasAnimator)
+                {
+                    if (weightCoroutine != null) StopCoroutine(weightCoroutine);
+                    weightCoroutine = StartCoroutine(ChangeLayerWeightSmoothly(1, _animator.GetLayerWeight(1), 1f, 0.3f));
+                    _animator.SetTrigger(_animIDAttack1);
+
+                    StartCoroutine(DelayedWeightDown(1.167f)); // 공격 애니메이션 길이
+                }
+
+                _input.attack = false;
+
+                StartCoroutine(ResetAttack(1.167f)); // 공격 완료 후 다시 false
+            }
+        }
+        public void ShootEventFromAnimator()
+        {
+            if (gun != null)
+            {
+                gun.ShootEvent();
+            }
+        }
+        private IEnumerator ResetAttack(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            isAttacking = false;
         }
 
-        gun.Fire();
-        _input.attack = false;
-    }
-}
+
 
         private IEnumerator DelayedWeightDown(float delay)
         {
             yield return new WaitForSeconds(delay);
 
-            if(weightCoroutine != null) StopCoroutine(weightCoroutine);
+            if (weightCoroutine != null) StopCoroutine(weightCoroutine);
             weightCoroutine = StartCoroutine(ChangeLayerWeightSmoothly(1, _animator.GetLayerWeight(1), 0f, 0.3f)); // 0.3초 동안 가중치 내리기
         }
         private IEnumerator ChangeLayerWeightSmoothly(int layerIndex, float startWeight, float endWeight, float duration)
@@ -415,24 +434,22 @@ private void HandleAttack()
 
 
 
-
         private void HandleReload()
+{
+        if (_input.reload && gun != null && gun.Reload())
         {
-            if (_input.reload) // 재장전 키 입력 감지 (예: R키)
+            if (_hasAnimator)
             {
-                if (_hasAnimator)
-                {
-                    _animator.SetTrigger(_animIDReload);
-                }
-
-                if (gun != null)
-                {
-                    gun.Reload(); // Gun 스크립트에서 재장전 로직 실행
-                }
-
-                _input.reload = false; // 입력 초기화
+                if (weightCoroutine != null) StopCoroutine(weightCoroutine);
+                weightCoroutine = StartCoroutine(ChangeLayerWeightSmoothly(1, _animator.GetLayerWeight(1), 1f, 0.2f));
+                _animator.SetTrigger(_animIDReload);
+                StartCoroutine(DelayedWeightDown(gun.gunData.reloadTime)); // reloadTime 만큼 기다린 후 weight 낮추기
             }
+
+            _input.reload = false; // 입력 초기화
         }
+}
+
 
 
 

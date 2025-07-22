@@ -66,5 +66,9 @@
     "explorer.fileNesting.patterns": {
         "*.sln": "*.csproj"
     },
+<<<<<<< HEAD
     "dotnet.defaultSolution": "TeamProject2.sln"
+=======
+    "dotnet.defaultSolution": "TeamProjectv2.sln"
+>>>>>>> 60bb42d918bfe0220e90531213a775622e7639be
 }

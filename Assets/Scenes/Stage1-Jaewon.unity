@@ -12698,11 +12698,6 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
---- !u!4 &110659340 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 378377229812291806, guid: 0c8cb1e6b4c920b41865297ecc870590, type: 3}
-  m_PrefabInstance: {fileID: 1768741915}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &113694435
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13840,6 +13835,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 589506646444817264, guid: af91e2157efdcf64583db450cdadcd09, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1617217504}
+    - targetCorrespondingSourceObject: {fileID: 589506646444817264, guid: af91e2157efdcf64583db450cdadcd09, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 829703320}
     - targetCorrespondingSourceObject: {fileID: 3089388811833401897, guid: af91e2157efdcf64583db450cdadcd09, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1195006394}
@@ -28146,7 +28144,7 @@ LineRenderer:
   - {x: 0, y: 0, z: 1}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 1
+    widthMultiplier: 0.02
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -29966,6 +29964,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5442020193720106143, guid: 2c4ada107f11c85428cf29b036419497, type: 3}
   m_PrefabInstance: {fileID: 816489960}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &829703319
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 829703320}
+  m_Layer: 0
+  m_Name: Fire Position
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &829703320
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 829703319}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.079, y: 1.314, z: 0.855}
+  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 195722618}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &839124572
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -72482,7 +72511,7 @@ PrefabInstance:
     - target: {fileID: 1607335303077718940, guid: 0c8cb1e6b4c920b41865297ecc870590, type: 3}
       propertyPath: fireTransform
       value: 
-      objectReference: {fileID: 110659340}
+      objectReference: {fileID: 829703320}
     - target: {fileID: 1607335303077718940, guid: 0c8cb1e6b4c920b41865297ecc870590, type: 3}
       propertyPath: shellEjectEffect
       value: 

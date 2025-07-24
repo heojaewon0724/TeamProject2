@@ -46,6 +46,9 @@ public class PlayerSkillController : MonoBehaviour
 
             if (playerInput.attack3)
                 OnSkillButton(1); // 두 번째 스킬
+
+            if (playerInput.attack4)
+                OnSkillButton(2); // 두 번째 스킬
         }
     }
 
@@ -72,7 +75,7 @@ public class PlayerSkillController : MonoBehaviour
         currentSkill.Activate(gameObject);
 
         // 이름으로 컷씬 오브젝트 찾기 (연출용)
-        if (!string.IsNullOrEmpty(currentSkill.cutsceneObjectName))
+        /*if (!string.IsNullOrEmpty(currentSkill.cutsceneObjectName))
         {
             GameObject cutsceneObj = GameObject.Find(currentSkill.cutsceneObjectName);
             if (cutsceneObj != null)
@@ -94,7 +97,7 @@ public class PlayerSkillController : MonoBehaviour
         {
             // 컷씬이 없으면 바로 입력 복구
             RestorePlayerControl();
-        }
+        }*/
 
         // 쿨타임 적용
         skillCooldownTimers[skillIndex] = currentSkill.cooldown;

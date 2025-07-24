@@ -50,8 +50,7 @@ public class PlayerInputTest : MonoBehaviour {
 
         // 스킬 입력 감지
         attack2 = Input.GetButtonDown(attack2Name); // attack2Name = "attack2"
-        attack2 = Input.GetKey(attack2Name);
-        attack3 = Input.GetKey(attack3Name);
+        attack3 = Input.GetButtonDown(attack3Name);
         attack4 = Input.GetButtonDown(attack4Name);
     }
 }

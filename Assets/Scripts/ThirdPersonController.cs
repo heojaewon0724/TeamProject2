@@ -1,4 +1,4 @@
-﻿using Unity.VisualScripting;
+using Unity.VisualScripting;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM 
 using UnityEngine.InputSystem;
@@ -448,6 +448,7 @@ namespace StarterAssets
                     _animator.SetTrigger(_animIDAttack2); // Attack2 실행
                 }
             }
+            
 
             if (Keyboard.current.eKey.wasPressedThisFrame) //E키 입력 체크
             {

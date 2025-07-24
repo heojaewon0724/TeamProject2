@@ -31057,7 +31057,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &789457871
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46341,7 +46341,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7889868630803175547, guid: 789c33a53c487d74f936461aaf48ec4a, type: 3}
       propertyPath: m_RenderPostProcessing
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8538758461560705257, guid: 789c33a53c487d74f936461aaf48ec4a, type: 3}
       propertyPath: m_Name
@@ -77310,6 +77310,10 @@ PrefabInstance:
     - target: {fileID: 866509275899488806, guid: 32ab43c8e9f0944478bd9827d0ab8b51, type: 3}
       propertyPath: m_Layer
       value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 899115668298733553, guid: 32ab43c8e9f0944478bd9827d0ab8b51, type: 3}
+      propertyPath: cursorLocked
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 899115668298733553, guid: 32ab43c8e9f0944478bd9827d0ab8b51, type: 3}
       propertyPath: weaponObject

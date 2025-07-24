@@ -10,8 +10,11 @@ public class AreaBlastSkill : SkillBase
     public float damage = 80f;
     public float cooldownTime = 6f;
     public float effectDelay = 0.5f;
-    public float damageInterval = 0.5f;  // 데미지 입히는 시간 간격 (초 단위)
-    public int damageCount = 1;           // 데미지를 입히는 횟수, 1이면 한번만
+    public float attackStartDelay = 0.5f;    // 공격 판정 시작하는 지연시간
+    public float attackActiveTime = 2.0f;    // 공격 판정이 활성화되는 지속 시간 (예: 광역 지속 데미지 유지 시간)
+    public float damageInterval = 0.5f;      // 데미지 입히는 간격 (공격 활성화 중 반복 적용하는 속도)
+    public int damageCount = 1;               // 데미지 반복 횟수 (1이면 한번만)
+
     public string animationTrigger = "Attack2";
 
     public override float cooldown => cooldownTime;
@@ -29,33 +32,35 @@ public class AreaBlastSkill : SkillBase
 
     private IEnumerator DelayedAreaBlast(GameObject user)
     {
-        // 이펙트 위치 계산
         Vector3 center = user.transform.position + user.transform.forward * distance;
 
-        // 1. 이펙트 생성
+        // 이펙트 생성
         if (areaEffectPrefab != null)
-        {
             Object.Instantiate(areaEffectPrefab, center, Quaternion.identity);
-        }
 
-        // 2. 이펙트 딜레이 동안 대기 (딜레이 시간 설정한 변수 사용)
-        yield return new WaitForSeconds(effectDelay);
+        // 공격 시작 전 대기
+        yield return new WaitForSeconds(attackStartDelay);
 
-        // 3. 딜레이 후 데미지 판정 실행
-        Collider[] hits = Physics.OverlapSphere(center, range);
-        foreach (var hit in hits)
+        for (int i = 0; i < damageCount; i++)
         {
-            if (hit.transform.root == user.transform.root)
-                continue;
-
-            if (hit.CompareTag("Enemy"))
+            Collider[] hits = Physics.OverlapSphere(center, range);
+            foreach (var hit in hits)
             {
-                Enemy enemy = hit.GetComponent<Enemy>();
-                if (enemy != null)
+                if (hit.transform.root == user.transform.root)
+                    continue;
+
+                if (hit.CompareTag("Enemy"))
                 {
-                    enemy.TakeDamage(damage);
+                    Enemy enemy = hit.GetComponent<Enemy>();
+                    if (enemy != null)
+                    {
+                        enemy.TakeDamage(damage);
+                    }
                 }
             }
+
+            if (i < damageCount - 1)
+                yield return new WaitForSeconds(damageInterval);
         }
     }
 

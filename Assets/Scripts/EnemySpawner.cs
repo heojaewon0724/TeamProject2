@@ -2,15 +2,18 @@
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
+using StarterAssets;
 
 public class EnemySpawner : MonoBehaviour
 {
     public Enemy[] enemyPrefabs;            // 여러 적 프리팹 배열
     public Transform[] spawnPoints;         // 소환 위치 배열
+    public MonoBehaviour playerMovementScript;
 
     public Text waveUIText;
     public int currentWave = 0;
-
+    public bool isClear=false;
     // 웨이브별 몇 마리, 그리고 어떤 프리팹 인덱스인지 배열로 관리 (각 웨이브마다 여러 마리 가능)
     [System.Serializable]
     public class Wave
@@ -23,6 +26,16 @@ public class EnemySpawner : MonoBehaviour
     public Wave[] waves;
 
     private List<GameObject> aliveEnemies = new List<GameObject>();
+    private void Update()
+    {
+        if (isClear && Input.GetMouseButtonDown(0)) // 왼쪽 클릭 감지
+        {
+            // 씬 재시작 전 timeScale 1로 복구
+            Time.timeScale = 1f;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+
+    }
 
     void Start()
     {
@@ -67,8 +80,12 @@ public class EnemySpawner : MonoBehaviour
             yield return new WaitForSeconds(2f);
         }
 
-        waveUIText.text = "GAME CLEAR!";
+        waveUIText.text = "GAME CLEAR! Left Clcik To Restart";
         waveUIText.gameObject.SetActive(true);
+        isClear = true;
+        if (playerMovementScript != null)
+            playerMovementScript.enabled = false;
+        Time.timeScale = 0f;
     }
 
 

@@ -42,8 +42,8 @@ public static GameManager instance
     private void UpdateHPUI()
     {
         // 텍스트에 체력값 표시
-        hpText.text = $"{currentHP} / {maxHP}";
+//        hpText.text = $"{currentHP} / {maxHP}";
         // UI 채우기 값 업데이트 (0~1로 변환)
-        hpBarFill.fillAmount = (float)currentHP / maxHP;
+//        hpBarFill.fillAmount = (float)currentHP / maxHP;
     }
 }

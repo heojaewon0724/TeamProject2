@@ -10,6 +10,7 @@ public class AreaBlastSkill : SkillBase
     public float damage = 80f;
     public float cooldownTime = 6f;
     public float effectDelay = 0.5f;
+    public string animationTrigger = "Attack2"; // 퍼블릭으로 설정한 애니메이션 트리거
 
     public override float cooldown => cooldownTime;
 
@@ -18,7 +19,7 @@ public class AreaBlastSkill : SkillBase
         // 1. 애니메이션 실행
         var animator = user.GetComponent<Animator>();
         if (animator != null)
-            animator.SetTrigger("Attack2"); // Q 스킬은 Attack2 트리거 사용
+            animator.SetTrigger(animationTrigger); // 퍼블릭 변수로 설정한 애니메이션 트리거 사용
 
         // 2. 이펙트 및 판정 실행
         var mono = user.GetComponent<MonoBehaviour>();

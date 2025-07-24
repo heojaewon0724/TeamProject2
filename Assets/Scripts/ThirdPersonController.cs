@@ -412,6 +412,9 @@ namespace StarterAssets
             // 방패 모션 중이면 공격 금지
             if (_animator.GetCurrentAnimatorStateInfo(0).IsTag("Block")) return;
 
+            // 스킬 애니메이션 중이면 평타 공격 금지
+            if (IsPlayingSkillAnimation()) return;
+
             if (_input.attack) // 마우스 왼쪽 클릭하면
             {
                 if (_hasAnimator)
@@ -441,30 +444,18 @@ namespace StarterAssets
                 }
             }
 
-            if (Keyboard.current.qKey.wasPressedThisFrame) //Q키 입력 체크
-            {
-                if (_hasAnimator)
-                {
-                    _animator.SetTrigger(_animIDAttack2); // Attack2 실행
-                }
-            }
-            
+            // Q, E, R 키는 PlayerSkillController에서 처리하므로 여기서는 제거
+        }
 
-            if (Keyboard.current.eKey.wasPressedThisFrame) //E키 입력 체크
-            {
-                if (_hasAnimator)
-                {
-                    _animator.SetTrigger(_animIDAttack3); // Attack3 실행
-                }
-            }
+        // 스킬 애니메이션이 재생 중인지 확인하는 메서드
+        private bool IsPlayingSkillAnimation()
+        {
+            if (_animator == null) return false;
+
+            AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
             
-            if (Keyboard.current.rKey.wasPressedThisFrame) //R키 입력 체크
-            {
-                if (_hasAnimator)
-                {
-                    _animator.SetTrigger(_animIDAttack4); // Attack4 실행
-                }
-            }
+            // Attack2, Attack3, Attack4 스킬 애니메이션이 재생 중인지 확인
+            return stateInfo.IsName("Attack2") || stateInfo.IsName("Attack3") || stateInfo.IsName("Attack4");
         }
 
         private void Slash()
@@ -542,7 +533,7 @@ namespace StarterAssets
         {
             if (animationEvent.animatorClipInfo.weight > 0.5f)
             {
-                if (FootstepAudioClips.Length > 0)
+                if (FootstepAudioClips != null && FootstepAudioClips.Length > 0)
                 {
                     var index = Random.Range(0, FootstepAudioClips.Length);
                     AudioSource.PlayClipAtPoint(FootstepAudioClips[index], transform.TransformPoint(_controller.center), FootstepAudioVolume);
@@ -554,7 +545,10 @@ namespace StarterAssets
         {
             if (animationEvent.animatorClipInfo.weight > 0.5f)
             {
-                AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
+                if (LandingAudioClip != null)
+                {
+                    AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
+                }
             }
         }
 

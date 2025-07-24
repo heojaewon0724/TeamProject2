@@ -1,4 +1,4 @@
-    using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 [CreateAssetMenu(menuName = "Skill/AreaBlastSkill")]
@@ -10,18 +10,18 @@ public class AreaBlastSkill : SkillBase
     public float damage = 80f;
     public float cooldownTime = 6f;
     public float effectDelay = 0.5f;
-    public string animationTrigger = "Attack2"; // 퍼블릭으로 설정한 애니메이션 트리거
+    public float damageInterval = 0.5f;  // 데미지 입히는 시간 간격 (초 단위)
+    public int damageCount = 1;           // 데미지를 입히는 횟수, 1이면 한번만
+    public string animationTrigger = "Attack2";
 
     public override float cooldown => cooldownTime;
 
     public override void Activate(GameObject user)
     {
-        // 1. 애니메이션 실행
         var animator = user.GetComponent<Animator>();
         if (animator != null)
-            animator.SetTrigger(animationTrigger); // 퍼블릭 변수로 설정한 애니메이션 트리거 사용
+            animator.SetTrigger(animationTrigger);
 
-        // 2. 이펙트 및 판정 실행
         var mono = user.GetComponent<MonoBehaviour>();
         if (mono != null)
             mono.StartCoroutine(DelayedAreaBlast(user));
@@ -29,15 +29,19 @@ public class AreaBlastSkill : SkillBase
 
     private IEnumerator DelayedAreaBlast(GameObject user)
     {
-        yield return new WaitForSeconds(effectDelay);
-
+        // 이펙트 위치 계산
         Vector3 center = user.transform.position + user.transform.forward * distance;
 
-        // 이펙트 생성
+        // 1. 이펙트 생성
         if (areaEffectPrefab != null)
+        {
             Object.Instantiate(areaEffectPrefab, center, Quaternion.identity);
+        }
 
-        // 데미지 판정: Enemy 컴포넌트가 붙은 오브젝트에만 데미지 적용
+        // 2. 이펙트 딜레이 동안 대기 (딜레이 시간 설정한 변수 사용)
+        yield return new WaitForSeconds(effectDelay);
+
+        // 3. 딜레이 후 데미지 판정 실행
         Collider[] hits = Physics.OverlapSphere(center, range);
         foreach (var hit in hits)
         {
@@ -53,7 +57,6 @@ public class AreaBlastSkill : SkillBase
                 }
             }
         }
-
     }
 
 }

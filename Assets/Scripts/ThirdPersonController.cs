@@ -1,4 +1,5 @@
-﻿ using UnityEngine;
+﻿using Unity.VisualScripting;
+using UnityEngine;
 #if ENABLE_INPUT_SYSTEM 
 using UnityEngine.InputSystem;
 #endif
@@ -115,6 +116,8 @@ namespace StarterAssets
         private bool _isDead = false; // 죽음 상태 체크
 
         public bool IsShielding = false;
+        public bool IsSlashing = false;
+
 
 #if ENABLE_INPUT_SYSTEM
         private PlayerInput _playerInput;
@@ -177,7 +180,9 @@ namespace StarterAssets
 
             JumpAndGravity();
             GroundedCheck();
-            Move();
+            if (IsShielding==false){
+                Move();
+            }
             HandleAttack();
 
             ToggleRootMotion();

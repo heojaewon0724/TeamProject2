@@ -10,6 +10,23 @@ public class GameManager : MonoBehaviour
     private int maxHP = 100;
     private int currentHP = 100;
 
+    public bool isGameover { get; private set; }
+
+
+public static GameManager instance
+    {
+        get
+        {
+            if (m_instance == null)
+            {
+                m_instance = FindFirstObjectByType<GameManager>();
+            }
+            return m_instance;
+        }
+    }
+
+    private static GameManager m_instance;
+
     void Start()
     {
         // 예시로 기본값 세팅

@@ -1,42 +1,78 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.UI;
+using System.Collections;
+using System.Collections.Generic;
 
 public class EnemySpawner : MonoBehaviour
 {
-    public Enemy[] enemyPrefabs;
-    public Transform[] spawnPoints;
+    public Enemy[] enemyPrefabs;            // 여러 적 프리팹 배열
+    public Transform[] spawnPoints;         // 소환 위치 배열
 
-    private int prefabIndex = 0; // 어떤 프리팹 차례인지
+    public Text waveUIText;
+    public int currentWave = 0;
 
-    // 한 번 호출로 3마리 소환
-    public void SpawnThreeEnemies()
+    // 웨이브별 몇 마리, 그리고 어떤 프리팹 인덱스인지 배열로 관리 (각 웨이브마다 여러 마리 가능)
+    [System.Serializable]
+    public class Wave
     {
-        if (enemyPrefabs.Length == 0 || spawnPoints.Length == 0)
-            return;
-
-        Enemy prefab = enemyPrefabs[prefabIndex];
-
-        for (int i = 0; i < 3; i++)
-        {
-            Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
-            Enemy enemy = Instantiate(prefab, spawnPoint.position, spawnPoint.rotation);
-
-            // 필요하다면 관리 코드 (onDeath 등)
-            // enemy.onDeath += ...;
-        }
-
-        // 다음 프리팹으로 인덱스 이동 (끝나면 처음으로)
-        prefabIndex++;
-        if (prefabIndex >= enemyPrefabs.Length)
-            prefabIndex = 0;
+        public int[] enemyCounts;            // Example: {1,2,0} => enemyPrefabs[0] 1마리, [1] 2마리, [2] 0마리
     }
 
-    // 예시: 스페이스바로 3마리씩 소환
-    private void Update()
+    public Wave[] waves;
+
+    private List<GameObject> aliveEnemies = new List<GameObject>();
+
+    void Start()
     {
-        if (Input.GetKeyDown(KeyCode.F))
+        waveUIText.gameObject.SetActive(false);
+        StartCoroutine(WaveRoutine());
+    }
+
+    IEnumerator WaveRoutine()
+    {
+        while (currentWave < waves.Length)
         {
-            SpawnThreeEnemies();
+            waveUIText.text = $"WAVE {currentWave + 1}";
+            waveUIText.gameObject.SetActive(true);
+            yield return new WaitForSeconds(1f);
+            waveUIText.gameObject.SetActive(false);
+
+            aliveEnemies.Clear();
+
+            Wave wave = waves[currentWave];
+
+            // 웨이브 내 모든 적 종류별로 소환
+            for (int prefabIndex = 0; prefabIndex < enemyPrefabs.Length; prefabIndex++)
+            {
+                int count = 0;
+                if (prefabIndex < wave.enemyCounts.Length)
+                    count = wave.enemyCounts[prefabIndex];
+
+                for (int i = 0; i < count; i++)
+                {
+                    Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+                    GameObject enemyGO = Instantiate(enemyPrefabs[prefabIndex].gameObject, spawnPoint.position, spawnPoint.rotation);
+
+                    Enemy enemy = enemyGO.GetComponent<Enemy>();
+                    if (enemy != null)
+                        enemy.spawner = this;
+
+                    aliveEnemies.Add(enemyGO);
+                }
+            }
+
+            yield return new WaitUntil(() => aliveEnemies.TrueForAll(e => e == null));
+
+            currentWave++;
+            yield return new WaitForSeconds(2f);
         }
+
+        waveUIText.text = "GAME CLEAR!";
+        waveUIText.gameObject.SetActive(true);
+    }
+
+    public void OnEnemyDie(GameObject enemy)
+    {
+        aliveEnemies.Remove(enemy);
     }
 }

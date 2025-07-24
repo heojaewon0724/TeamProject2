@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
+    [HideInInspector] 
+public EnemySpawner spawner;  // 스포너 참조 (없으면 null)
+
     [Header("Enemy Status")]
     public float maxHealth = 100f;
     private float currentHealth;
@@ -123,8 +126,12 @@ public class Enemy : MonoBehaviour
             agent.enabled = false;
         }
 
+        if (spawner != null)
+            spawner.OnEnemyDie(gameObject);  // 사망 사실을 스포너에 알림
+
         StartCoroutine(FadeOutAndDestroy(1f));
     }
+
 
     private IEnumerator FadeOutAndDestroy(float duration)
     {

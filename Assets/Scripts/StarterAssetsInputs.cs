@@ -77,7 +77,7 @@ namespace StarterAssets
 
         private IEnumerator AttackRoutine()
         {
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(0.05f);
             isAttacking = true;
             if (weaponCollider != null)
                 weaponCollider.enabled = true;

@@ -105,7 +105,7 @@ namespace StarterAssets
         private int _animIDAttack4;
         private int _animIDBlock; // 방패 애니메이션 ID 추가
         private bool _isDead = false; // 죽음 상태 체크
-        public bool IsShielding => _animator != null && _animator.GetBool(_animIDBlock);
+        public bool IsShielding = false;
 
 #if ENABLE_INPUT_SYSTEM
         private PlayerInput _playerInput;
@@ -168,7 +168,10 @@ namespace StarterAssets
 
             JumpAndGravity();
             GroundedCheck();
-            Move();
+            if (_animator.GetBool("Block") == false)
+            {
+                 Move(); // 블락 상태가 false일 때 실행할 로직
+            }
             HandleAttack();
 
             ToggleRootMotion();
@@ -238,7 +241,7 @@ namespace StarterAssets
 
         private void Move()
         {   
-
+            
             // set target speed based on move speed, sprint speed and if sprint is pressed
             float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
 
@@ -416,18 +419,15 @@ namespace StarterAssets
                 if (_hasAnimator)
                 {
                     _animator.SetBool(_animIDBlock, true); // 방패 들기
+                    IsShielding = true;
                 }
             }
-            else
+            if (Mouse.current.rightButton.isPressed==false)
             {
                 if (_hasAnimator)
                 {
-                    bool isBlocking = Mouse.current.rightButton.isPressed;
-    
-                        if (_animator.GetBool(_animIDBlock) != isBlocking)
-                        {
-                            _animator.SetBool(_animIDBlock, isBlocking);
-                        }
+                    _animator.SetBool(_animIDBlock, false);
+                    IsShielding = false;
                 }
             }
 

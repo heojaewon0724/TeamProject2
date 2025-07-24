@@ -15,8 +15,10 @@ public class EnemySpawner : MonoBehaviour
     [System.Serializable]
     public class Wave
     {
-        public int[] enemyCounts;            // Example: {1,2,0} => enemyPrefabs[0] 1마리, [1] 2마리, [2] 0마리
+        public int prefabIndex;   // 웨이브에서 사용할 프리팹 인덱스
+        public int count;         // 웨이브에서 소환할 개수
     }
+
 
     public Wave[] waves;
 
@@ -41,24 +43,22 @@ public class EnemySpawner : MonoBehaviour
 
             Wave wave = waves[currentWave];
 
-            // 웨이브 내 모든 적 종류별로 소환
-            for (int prefabIndex = 0; prefabIndex < enemyPrefabs.Length; prefabIndex++)
+            for (int i = 0; i < wave.count; i++)
             {
-                int count = 0;
-                if (prefabIndex < wave.enemyCounts.Length)
-                    count = wave.enemyCounts[prefabIndex];
-
-                for (int i = 0; i < count; i++)
+                if (wave.prefabIndex < 0 || wave.prefabIndex >= enemyPrefabs.Length)
                 {
-                    Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
-                    GameObject enemyGO = Instantiate(enemyPrefabs[prefabIndex].gameObject, spawnPoint.position, spawnPoint.rotation);
-
-                    Enemy enemy = enemyGO.GetComponent<Enemy>();
-                    if (enemy != null)
-                        enemy.spawner = this;
-
-                    aliveEnemies.Add(enemyGO);
+                    Debug.LogError($"Invalid prefabIndex {wave.prefabIndex} in wave {currentWave + 1}");
+                    break;
                 }
+
+                Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+                GameObject enemyGO = Instantiate(enemyPrefabs[wave.prefabIndex].gameObject, spawnPoint.position, spawnPoint.rotation);
+
+                Enemy enemy = enemyGO.GetComponent<Enemy>();
+                if (enemy != null)
+                    enemy.spawner = this;
+
+                aliveEnemies.Add(enemyGO);
             }
 
             yield return new WaitUntil(() => aliveEnemies.TrueForAll(e => e == null));
@@ -70,6 +70,7 @@ public class EnemySpawner : MonoBehaviour
         waveUIText.text = "GAME CLEAR!";
         waveUIText.gameObject.SetActive(true);
     }
+
 
     public void OnEnemyDie(GameObject enemy)
     {

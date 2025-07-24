@@ -17,4 +17,6 @@ public class EnemyHealthBar : MonoBehaviour
         float fillValue = Mathf.Clamp01(currentHealth / maxHealth);
         fillImage.fillAmount = fillValue;
     }
+    
 }
+    

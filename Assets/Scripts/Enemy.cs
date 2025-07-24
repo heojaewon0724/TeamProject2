@@ -2,11 +2,12 @@
 using UnityEngine.AI;
 using System.Collections;
 using UnityEngine.UI;
+using StarterAssets;
 
 public class Enemy : MonoBehaviour
 {
-    [HideInInspector] 
-public EnemySpawner spawner;  // 스포너 참조 (없으면 null)
+    [HideInInspector]
+    public EnemySpawner spawner;  // 스포너 참조 (없으면 null)
 
     [Header("Enemy Status")]
     public float maxHealth = 100f;
@@ -19,6 +20,8 @@ public EnemySpawner spawner;  // 스포너 참조 (없으면 null)
     public Transform player;
     public EnemyHealthBar healthBar;  // 체력바 스크립트 (캔버스 자식에 붙여두고 연결)
 
+    private float lastHitTime = 0f;           // 마지막으로 데미지를 받은 시간
+    public float damageCooldown = 0.5f;       // 데미지 입은 후 재입력 가능 쿨다운(초)
     private NavMeshAgent agent;
     private Animator animator;
     private Renderer[] renderers;
@@ -94,7 +97,7 @@ public EnemySpawner spawner;  // 스포너 참조 (없으면 null)
         if (collision.gameObject.CompareTag("Player"))
         {
             PlayerHealth playerHealth = collision.gameObject.GetComponent<PlayerHealth>();
-            if (playerHealth != null)
+            if (playerHealth != null&&animator.GetBool("Block") == false)
             {
                 playerHealth.TakeDamage(damage);
             }
@@ -103,6 +106,12 @@ public EnemySpawner spawner;  // 스포너 참조 (없으면 null)
 
     public void TakeDamage(float amount)
     {
+        // 쿨다운 체크: 마지막 피격 시점에서 damageCooldown 초 지났는지 확인
+        if (Time.time - lastHitTime < damageCooldown)
+            return;  // 아직 쿨다운 중이라 데미지를 무시
+
+        lastHitTime = Time.time;  // 데미지 받은 시간 갱신
+
         currentHealth -= amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
@@ -110,9 +119,7 @@ public EnemySpawner spawner;  // 스포너 참조 (없으면 null)
             healthBar.UpdateHealthBar(currentHealth, maxHealth);
 
         if (currentHealth <= 0)
-        {
             Die();
-        }
     }
 
     private void Die()
@@ -157,5 +164,21 @@ public EnemySpawner spawner;  // 스포너 참조 (없으면 null)
         }
 
         Destroy(gameObject);
+    }
+    private void LateUpdate()
+    {
+        if (healthBar != null && Camera.main != null)
+        {
+            // 체력바의 부모(캔버스)가 있다면 그 Transform을 사용
+            Transform barTransform = healthBar.transform;
+            if (healthBar.transform.parent != null)
+                barTransform = healthBar.transform.parent;
+
+            // 카메라의 정면 방향을 따라가게 함 (월드 기준)
+            barTransform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
+
+            // 필요하다면 180도 회전
+            barTransform.Rotate(0, 180f, 0);
+        }
     }
 }

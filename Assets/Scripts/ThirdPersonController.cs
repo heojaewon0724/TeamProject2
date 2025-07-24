@@ -1,3 +1,4 @@
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM 
@@ -96,6 +97,8 @@ namespace StarterAssets
         private float _verticalVelocity;
         private float _terminalVelocity = 53.0f;
         public float Attacking = 1.1f;
+        public AudioClip attackSFX;  // 인스펙터에서 기본 공격 효과음 클립 할당
+        public AudioSource sfxAudioSource;   // 효과음 재생용 AudioSource
 
         // timeout deltatime
         private float _jumpTimeoutDelta;
@@ -153,6 +156,14 @@ namespace StarterAssets
             {
                 _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
             }
+           
+            if (sfxAudioSource == null)
+            {
+                sfxAudioSource = gameObject.AddComponent<AudioSource>();
+                sfxAudioSource.playOnAwake = false;
+                sfxAudioSource.loop = false;
+            }
+            // 기존 Awake 내용은 그대로 유지
         }
 
         private void Start()
@@ -411,24 +422,26 @@ namespace StarterAssets
         }
         private void HandleAttack()
         {
-            // 방패 모션 중이면 공격 금지
             if (_animator.GetCurrentAnimatorStateInfo(0).IsTag("Block")) return;
-
-            // 스킬 애니메이션 중이면 평타 공격 금지
             if (IsPlayingSkillAnimation()) return;
 
-            if (_input.attack) // 마우스 왼쪽 클릭하면
+            if (_input.attack)
             {
                 if (_hasAnimator)
                 {
                     StartCoroutine(Attack(Attacking));
                 }
 
-                // 공격 입력 초기화해서 연속 재생 방지
+                // 즉시 PlayOneShot 하지 말고 0.2초 뒤에 실행하는 코루틴 시작
+                if (sfxAudioSource != null && attackSFX != null)
+                {
+                    StartCoroutine(PlayAttackSFXDelayed(0.3f));
+                }
+
                 _input.attack = false;
                 weaponcollider.enabled = false;
-
             }
+
 
             // 마우스 오른쪽 클릭 = 방패
             if (Mouse.current.rightButton.isPressed)
@@ -451,7 +464,13 @@ namespace StarterAssets
             // Q, E, R 키는 PlayerSkillController에서 처리하므로 여기서는 제거
         }
 
+
         // 스킬 애니메이션이 재생 중인지 확인하는 메서드
+        private IEnumerator PlayAttackSFXDelayed(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            sfxAudioSource.PlayOneShot(attackSFX);
+        }
         private bool IsPlayingSkillAnimation()
         {
             if (_animator == null) return false;

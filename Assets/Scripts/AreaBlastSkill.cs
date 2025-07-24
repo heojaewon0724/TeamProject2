@@ -14,6 +14,9 @@ public class AreaBlastSkill : SkillBase
     public float attackActiveTime = 2.0f;    // 공격 판정이 활성화되는 지속 시간 (예: 광역 지속 데미지 유지 시간)
     public float damageInterval = 0.5f;      // 데미지 입히는 간격 (공격 활성화 중 반복 적용하는 속도)
     public int damageCount = 1;               // 데미지 반복 횟수 (1이면 한번만)
+    public AudioClip skillSFX;
+    public float sfxDelay = 0f;  // 효과음 재생 지연 시간 추가
+
 
     public string animationTrigger = "Attack2";
 
@@ -27,8 +30,27 @@ public class AreaBlastSkill : SkillBase
 
         var mono = user.GetComponent<MonoBehaviour>();
         if (mono != null)
+        {
             mono.StartCoroutine(DelayedAreaBlast(user));
+            mono.StartCoroutine(DelayedPlaySFX(sfxDelay));
+        }
     }
+    private IEnumerator DelayedPlaySFX(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        if (AudioManager.instance != null && skillSFX != null)
+        {
+            AudioManager.instance.PlaySkillSFX(skillSFX);
+        }
+    }
+
+
+
+
+
+
+
 
     private IEnumerator DelayedAreaBlast(GameObject user)
     {

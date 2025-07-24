@@ -75,6 +75,14 @@ namespace StarterAssets
         [Tooltip("For locking the camera position on all axis")]
         public bool LockCameraPosition = false;
 
+        [Header("Effects")]
+        public SlashEffect slashVFX; // 이펙트 스크립트 연결
+        public ParticleSystem attack2VFX; // Attack2 이펙트 추가
+         public ParticleSystem attack3VFX; // Attack2 이펙트 추가
+         public ParticleSystem attack4VFX; // Attack2 이펙트 추가
+         public ParticleSystem attack4_1VFX; // Attack2 이펙트 추가
+        public ParticleSystem BlockVFX; // Attack2 이펙트 추가
+
         // cinemachine
         private float _cinemachineTargetYaw;
         private float _cinemachineTargetPitch;
@@ -105,6 +113,7 @@ namespace StarterAssets
         private int _animIDAttack4;
         private int _animIDBlock; // 방패 애니메이션 ID 추가
         private bool _isDead = false; // 죽음 상태 체크
+
         public bool IsShielding = false;
 
 #if ENABLE_INPUT_SYSTEM
@@ -126,7 +135,7 @@ namespace StarterAssets
 #if ENABLE_INPUT_SYSTEM
                 return _playerInput.currentControlScheme == "KeyboardMouse";
 #else
-				return false;
+            return false;
 #endif
             }
         }
@@ -151,7 +160,7 @@ namespace StarterAssets
 #if ENABLE_INPUT_SYSTEM 
             _playerInput = GetComponent<PlayerInput>();
 #else
-			Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
+         Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
 #endif
 
             AssignAnimationIDs();
@@ -168,10 +177,7 @@ namespace StarterAssets
 
             JumpAndGravity();
             GroundedCheck();
-            if (_animator.GetBool("Block") == false)
-            {
-                 Move(); // 블락 상태가 false일 때 실행할 로직
-            }
+            Move();
             HandleAttack();
 
             ToggleRootMotion();
@@ -241,7 +247,6 @@ namespace StarterAssets
 
         private void Move()
         {   
-            
             // set target speed based on move speed, sprint speed and if sprint is pressed
             float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
 
@@ -426,7 +431,7 @@ namespace StarterAssets
             {
                 if (_hasAnimator)
                 {
-                    _animator.SetBool(_animIDBlock, false);
+                    _animator.SetBool(_animIDBlock, false); // 방패 들기
                     IsShielding = false;
                 }
             }
@@ -454,6 +459,55 @@ namespace StarterAssets
                     _animator.SetTrigger(_animIDAttack4); // Attack4 실행
                 }
             }
+        }
+
+        private void Slash()
+        {
+            if (slashVFX != null)
+                {
+                    slashVFX.Play();
+                }
+        }
+
+        private void Skill1()
+        {
+            if (attack2VFX != null) // 이펙트 실행
+                {
+                    attack2VFX.Play();
+                }
+        }
+        
+        private void Skill2()
+        {
+            if (attack3VFX != null) // 이펙트 실행
+                {
+                    attack3VFX.Play();
+                }
+        }
+
+        private void Skill3()
+        {
+            if (attack4VFX != null) // 이펙트 실행
+                {
+                    attack4VFX.Play();
+                }
+        }
+
+        private void Skill4()
+        {
+            if (attack4_1VFX != null) // 이펙트 실행
+                {
+                    attack4_1VFX.Play();
+                }
+        }
+
+        private void Block()
+        {
+            if (BlockVFX != null) // 이펙트 실행
+            {
+                BlockVFX.Play();
+            }
+
         }
 
 

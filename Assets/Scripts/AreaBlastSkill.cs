@@ -1,4 +1,4 @@
-using UnityEngine;
+    using UnityEngine;
 using System.Collections;
 
 [CreateAssetMenu(menuName = "Skill/AreaBlastSkill")]
@@ -37,18 +37,23 @@ public class AreaBlastSkill : SkillBase
         if (areaEffectPrefab != null)
             Object.Instantiate(areaEffectPrefab, center, Quaternion.identity);
 
-        // 데미지 판정
+        // 데미지 판정: Enemy 컴포넌트가 붙은 오브젝트에만 데미지 적용
         Collider[] hits = Physics.OverlapSphere(center, range);
         foreach (var hit in hits)
         {
-            if (hit.transform.root == user.transform.root) continue;
+            if (hit.transform.root == user.transform.root)
+                continue;
 
-            var target = hit.GetComponent<IDamageable>();
-            if (target != null)
+            if (hit.CompareTag("Enemy"))
             {
-                Vector3 hitPoint = hit.transform.position + Vector3.up * 0.2f;
-                target.OnDamage(damage, hitPoint, Vector3.down);
+                Enemy enemy = hit.GetComponent<Enemy>();
+                if (enemy != null)
+                {
+                    enemy.TakeDamage(damage);
+                }
             }
         }
+
     }
+
 }

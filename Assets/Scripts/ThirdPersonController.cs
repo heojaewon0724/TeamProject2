@@ -95,6 +95,7 @@ namespace StarterAssets
         private float _rotationVelocity;
         private float _verticalVelocity;
         private float _terminalVelocity = 53.0f;
+        public float Attacking = 1.1f;
 
         // timeout deltatime
         private float _jumpTimeoutDelta;
@@ -115,9 +116,10 @@ namespace StarterAssets
         private int _animIDBlock; // 방패 애니메이션 ID 추가
         private bool _isDead = false; // 죽음 상태 체크
 
+        private bool isAttacking = false; // 공격 중인지 여부
         public bool IsShielding = false;
         public bool IsSlashing = false;
-
+        public Collider weaponcollider;
 
 #if ENABLE_INPUT_SYSTEM
         private PlayerInput _playerInput;
@@ -178,10 +180,10 @@ namespace StarterAssets
             if (_isDead) return; // 죽었으면 입력/이동/공격 스킵
             _hasAnimator = TryGetComponent(out _animator);
 
-            JumpAndGravity();
             GroundedCheck();
-            if (IsShielding==false){
+            if (IsShielding==false&&isAttacking==false&&IsPlayingSkillAnimation()==false){
                 Move();
+                JumpAndGravity();
             }
             HandleAttack();
 
@@ -419,11 +421,13 @@ namespace StarterAssets
             {
                 if (_hasAnimator)
                 {
-                    _animator.SetTrigger(_animIDAttack1);
+                    StartCoroutine(Attack(Attacking));
                 }
 
                 // 공격 입력 초기화해서 연속 재생 방지
                 _input.attack = false;
+                weaponcollider.enabled = false;
+
             }
 
             // 마우스 오른쪽 클릭 = 방패
@@ -451,6 +455,7 @@ namespace StarterAssets
         private bool IsPlayingSkillAnimation()
         {
             if (_animator == null) return false;
+            if (isAttacking == true) return false;
 
             AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
             
@@ -458,6 +463,16 @@ namespace StarterAssets
             return stateInfo.IsName("Attack2") || stateInfo.IsName("Attack3") || stateInfo.IsName("Attack4");
         }
 
+        private System.Collections.IEnumerator Attack(float attacktime)
+        {
+            isAttacking = true;
+            _animator.SetTrigger(_animIDAttack1);
+            yield return new WaitForSeconds(0.1f);
+            weaponcollider.enabled = true; // 공격 콜라이더 활성화
+            yield return new WaitForSeconds(attacktime);
+            weaponcollider.enabled = false; // 공격 콜라이더 비활성화
+            isAttacking = false;
+        }
         private void Slash()
         {
             if (slashVFX != null)

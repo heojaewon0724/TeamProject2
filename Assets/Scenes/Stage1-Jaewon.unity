@@ -77312,6 +77312,10 @@ PrefabInstance:
       value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 899115668298733553, guid: 32ab43c8e9f0944478bd9827d0ab8b51, type: 3}
+      propertyPath: cursorLocked
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 899115668298733553, guid: 32ab43c8e9f0944478bd9827d0ab8b51, type: 3}
       propertyPath: weaponObject
       value: 
       objectReference: {fileID: 2011251135}

@@ -13842,6 +13842,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5313456068782518071, guid: 50f1354827c77ef4b99c4dca0ee3411d, type: 3}
       insertIndex: 1
       addedObject: {fileID: 711007470}
+    - targetCorrespondingSourceObject: {fileID: 5313456068782518071, guid: 50f1354827c77ef4b99c4dca0ee3411d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 711007472}
   m_SourcePrefab: {fileID: 100100000, guid: 50f1354827c77ef4b99c4dca0ee3411d, type: 3}
 --- !u!1001 &210950415
 PrefabInstance:
@@ -14223,6 +14226,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1119179762483836931, guid: d2ffbc8b168cdf74a9dbb7c6c1cfdf2f, type: 3}
+      propertyPath: lengthInSec
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1119179762483836931, guid: d2ffbc8b168cdf74a9dbb7c6c1cfdf2f, type: 3}
       propertyPath: playOnAwake
       value: 0
       objectReference: {fileID: 0}
@@ -14279,12 +14286,20 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6894328613904042626, guid: d2ffbc8b168cdf74a9dbb7c6c1cfdf2f, type: 3}
+      propertyPath: lengthInSec
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6894328613904042626, guid: d2ffbc8b168cdf74a9dbb7c6c1cfdf2f, type: 3}
       propertyPath: playOnAwake
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7047901910090771416, guid: d2ffbc8b168cdf74a9dbb7c6c1cfdf2f, type: 3}
       propertyPath: looping
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7047901910090771416, guid: d2ffbc8b168cdf74a9dbb7c6c1cfdf2f, type: 3}
+      propertyPath: lengthInSec
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7047901910090771416, guid: d2ffbc8b168cdf74a9dbb7c6c1cfdf2f, type: 3}
       propertyPath: playOnAwake
@@ -14294,9 +14309,21 @@ PrefabInstance:
       propertyPath: InitialModule.rotation3D
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7047901910090771416, guid: d2ffbc8b168cdf74a9dbb7c6c1cfdf2f, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7047901910090771416, guid: d2ffbc8b168cdf74a9dbb7c6c1cfdf2f, type: 3}
+      propertyPath: EmissionModule.m_Bursts.Array.data[0].time
+      value: 0.05
+      objectReference: {fileID: 0}
     - target: {fileID: 9150079641058182721, guid: d2ffbc8b168cdf74a9dbb7c6c1cfdf2f, type: 3}
       propertyPath: looping
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9150079641058182721, guid: d2ffbc8b168cdf74a9dbb7c6c1cfdf2f, type: 3}
+      propertyPath: lengthInSec
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9150079641058182721, guid: d2ffbc8b168cdf74a9dbb7c6c1cfdf2f, type: 3}
       propertyPath: playOnAwake
@@ -29184,6 +29211,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slashVFX: {fileID: 711007469}
   attachPoint: {fileID: 0}
+  SlashingTime: 0
+  isSkill: 0
+  damage: 0
+--- !u!65 &711007472
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 711007466}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0, y: 0, z: 8.231749}
+  m_Center: {x: -0.000015480373, y: -0.0000059484087, z: 0.358901}
 --- !u!1 &713506270
 GameObject:
   m_ObjectHideFlags: 0
@@ -30793,13 +30844,16 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 837875495}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b9a2f823fb0351a44a029b1857923b8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   slashVFX: {fileID: 274104916}
   attachPoint: {fileID: 0}
+  SlashingTime: 0
+  isSkill: 0
+  damage: 0
 --- !u!1001 &839124572
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -58731,6 +58785,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8705986516592252172, guid: 4d3c8045dd8857a4b8d34c2361c61045, type: 3}
+      propertyPath: lengthInSec
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8705986516592252172, guid: 4d3c8045dd8857a4b8d34c2361c61045, type: 3}
       propertyPath: playOnAwake
       value: 0
       objectReference: {fileID: 0}
@@ -74014,6 +74072,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slashVFX: {fileID: 1632175306}
   attachPoint: {fileID: 0}
+  SlashingTime: 4
+  isSkill: 0
+  damage: 0
 --- !u!1 &1632648525 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8736115590795592677, guid: 26ff2760dcd37464996eaee30729de1b, type: 3}
@@ -75595,6 +75656,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slashVFX: {fileID: 1696952850}
   attachPoint: {fileID: 0}
+  SlashingTime: 2
+  isSkill: 0
+  damage: 0
 --- !u!1001 &1699661666
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -76460,6 +76524,10 @@ PrefabInstance:
       propertyPath: attack4_1VFX
       value: 
       objectReference: {fileID: 1632175306}
+    - target: {fileID: 539396178385938182, guid: 32ab43c8e9f0944478bd9827d0ab8b51, type: 3}
+      propertyPath: weaponCollider
+      value: 
+      objectReference: {fileID: 2011251139}
     - target: {fileID: 539396178385938182, guid: 32ab43c8e9f0944478bd9827d0ab8b51, type: 3}
       propertyPath: FootstepAudioClips.Array.size
       value: 0
@@ -80596,6 +80664,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slashVFX: {fileID: 186679660}
   attachPoint: {fileID: 0}
+  SlashingTime: 2
+  isSkill: 0
+  damage: 0
 --- !u!1 &1936678449 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 9069872863127178892, guid: 2c4ada107f11c85428cf29b036419497, type: 3}
@@ -82003,6 +82074,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slashVFX: {fileID: 1994505935}
   attachPoint: {fileID: 0}
+  SlashingTime: 4
+  isSkill: 0
+  damage: 0
 --- !u!1001 &1998382562
 PrefabInstance:
   m_ObjectHideFlags: 0

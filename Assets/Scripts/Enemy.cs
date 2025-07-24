@@ -21,7 +21,7 @@ public class Enemy : MonoBehaviour
     public EnemyHealthBar healthBar;  // 체력바 스크립트 (캔버스 자식에 붙여두고 연결)
 
     private float lastHitTime = 0f;           // 마지막으로 데미지를 받은 시간
-    public float damageCooldown = 0.5f;       // 데미지 입은 후 재입력 가능 쿨다운(초)
+    public float damageCooldown = 1f;       // 데미지 입은 후 재입력 가능 쿨다운(초)
     private NavMeshAgent agent;
     private Animator animator;
     private Renderer[] renderers;

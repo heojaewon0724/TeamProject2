@@ -1,4 +1,5 @@
-﻿using Unity.VisualScripting;
+﻿using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM 
 using UnityEngine.InputSystem;
@@ -118,6 +119,8 @@ namespace StarterAssets
         public bool IsShielding = false;
         public bool IsSlashing = false;
 
+        public Collider weaponCollider; // 무기 콜라이더 인스펙터 연결
+        private float attackColliderActiveTime = 1f;
 
 #if ENABLE_INPUT_SYSTEM
         private PlayerInput _playerInput;
@@ -177,14 +180,14 @@ namespace StarterAssets
         {
             if (_isDead) return; // 죽었으면 입력/이동/공격 스킵
             _hasAnimator = TryGetComponent(out _animator);
-
-            JumpAndGravity();
-            GroundedCheck();
-            if (IsShielding==false){
+            if (IsShielding == false && IsSlashing == false)
+            {
                 Move();
+                JumpAndGravity();
             }
             HandleAttack();
 
+            GroundedCheck();
             ToggleRootMotion();
             
             // if (Keyboard.current.kKey.wasPressedThisFrame)
@@ -409,35 +412,43 @@ namespace StarterAssets
         }
         private void HandleAttack()
         {
-            // 방패 모션 중이면 공격 금지
             if (_animator.GetCurrentAnimatorStateInfo(0).IsTag("Block")) return;
 
-            if (_input.attack) // 마우스 왼쪽 클릭하면
+            if (_input.attack)
             {
                 if (_hasAnimator)
                 {
                     _animator.SetTrigger(_animIDAttack1);
-                }
 
-                // 공격 입력 초기화해서 연속 재생 방지
+                    if (weaponCollider != null)
+                    {
+                        StartCoroutine(EnableWeaponColliderRoutine());
+                    }
+                }
                 _input.attack = false;
             }
-
-            // 마우스 오른쪽 클릭 = 방패
             if (Mouse.current.rightButton.isPressed)
             {
                 if (_hasAnimator)
                 {
+                    Debug.Log("방패 듦");
                     _animator.SetBool(_animIDBlock, true); // 방패 들기
                     IsShielding = true;
+                    BlockVFX.Play();
+
+                    
                 }
             }
-            if (Mouse.current.rightButton.isPressed==false)
+            if (Mouse.current.rightButton.isPressed == false)
             {
                 if (_hasAnimator)
                 {
                     _animator.SetBool(_animIDBlock, false); // 방패 들기
                     IsShielding = false;
+                    BlockVFX.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
+                    Debug.Log("방패 내려놓음");
+
                 }
             }
 
@@ -466,19 +477,30 @@ namespace StarterAssets
             }
         }
 
+private IEnumerator EnableWeaponColliderRoutine()
+{
+    yield return new WaitForSeconds(0.1f);
+    weaponCollider.enabled = true;
+    yield return new WaitForSeconds(attackColliderActiveTime);
+    weaponCollider.enabled = false;
+}
+        
+            // 마우스 오른쪽 클릭 = 방패
+            
+
         private void Slash()
         {
             if (slashVFX != null)
-                {
-                    slashVFX.Play();
+            {
+                slashVFX.Play();
                 }
         }
 
         private void Skill1()
         {
             if (attack2VFX != null) // 이펙트 실행
-                {
-                    attack2VFX.Play();
+            {
+                attack2VFX.Play();
                 }
         }
         

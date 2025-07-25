@@ -82993,7 +82993,7 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 0.52754676, y: 1.7467256, z: 0.19583498}
   m_Center: {x: -0.0056982557, y: 0.49168304, z: 0.0058713895}
